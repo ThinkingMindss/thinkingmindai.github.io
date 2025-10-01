@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thinking Mind - AI Solution Partner</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting@1.0.6/dist/splitting.css">
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'space-blue': '#0A0E1A',
+                        'electric-cyan': '#00D4FF',
+                        'neural-gold': '#FFB800',
+                        'quantum-gray': '#1A1D29'
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'monospace'],
+                        'inter': ['Inter', 'sans-serif'],
+                        'jetbrains': ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000 0%, #0A0E1A 50%, #1A1D29 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated space background */
+        .space-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
+        
+        .space-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #00ffff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255, 184, 0, 0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #00ffff, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255, 184, 0, 0.6), transparent),
+                radial-gradient(2px 2px at 160px 30px, #00ffff, transparent);
+            background-repeat: repeat;
+            background-size: 200px 100px;
+            animation: sparkle 20s linear infinite;
+        }
+        
+        @keyframes sparkle {
+            from { transform: translateX(0); }
+            to { transform: translateX(200px); }
+        }
+        
+        .neural-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        
+        .glass-morphism {
+            background: rgba(0, 212, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(0, 212, 255, 0.3);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #00ffff 0%, #ff00ff 50%, #ffb800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: neon-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes neon-glow {
+            from { filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 30px rgba(255, 0, 255, 0.5)); }
+        }
+        
+        .neon-border {
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 10px #00ffff, inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+        
+        .curiosity-hook {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: #ffb800;
+            text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; text-shadow: 0 0 20px rgba(255, 184, 0, 0.8); }
+        }
+        
+        .text-neon-gold {
+            color: #ffb800;
+            text-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+        }
+        
+        .methodology-step {
+            transition: all 0.3s ease;
+        }
+        
+        .methodology-step:hover {
+            transform: translateY(-10px);
+        }
+        
+        .hover-3d {
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .hover-3d:hover {
+            transform: rotateY(5deg) rotateX(5deg) translateZ(20px);
+        }
+        
+        .pulse-neural {
+            animation: pulse-neural 2s infinite;
+        }
+        
+        @keyframes pulse-neural {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+        
+        .timeline-card {
+            perspective: 1000px;
+        }
+        
+        .timeline-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .timeline-card:hover .timeline-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .timeline-card-front, .timeline-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+        }
+        
+        .timeline-card-back {
+            transform: rotateY(180deg);
+        }
+        
+        .roi-chart {
+            height: 300px;
+        }
+        
+        .particle-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .frame {
+                min-height: 100vh;
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter text-white">
+    <!-- Space Background -->
+    <div class="space-bg"></div>
+    
+    <!-- Neural Network Background -->
+    <div id="neural-bg" class="neural-bg"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-morphism">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="resources/logo-thinking.png" alt="Thinking Mind" class="h-10 w-10">
+                    <span class="font-orbitron text-xl font-bold text-gradient">Thinking Mind</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="hover:text-electric-cyan transition-colors">Home</a>
+                    <a href="#solutions" class="hover:text-electric-cyan transition-colors">Solutions</a>
+                    <a href="#methodology" class="hover:text-electric-cyan transition-colors">Methodology</a>
+                    <a href="#roi" class="hover:text-electric-cyan transition-colors">ROI</a>
+                    <a href="#contact" class="hover:text-electric-cyan transition-colors">Contact</a>
+                </div>
+                <button class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Frame 1: Hero Section -->
+    <section id="home" class="frame min-h-screen flex items-center justify-center relative pt-20">
+        <div class="particle-container" id="particles"></div>
+        <div class="container mx-auto px-6 text-center z-10">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="font-orbitron text-5xl md:text-7xl font-bold mb-6">
+                    <span class="text-gradient" id="typed-text"></span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 mb-8 reveal">
+                    Thinking Mind - Your AI Solution Partner
+                </p>
+                <div class="curiosity-hook mb-12 reveal">
+                    <p class="text-xl mb-4">🧠 What if your business could think for itself?</p>
+                    <p class="text-lg">Discover the AI strategies that industry leaders don't want you to know.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center reveal">
+                    <button onclick="scrollToSection('contact')" class="px-8 py-4 bg-gradient-to-r from-electric-cyan to-neural-gold text-space-blue font-semibold rounded-lg hover-3d glow-effect">
+                        Start Your AI Journey
+                    </button>
+                    <button onclick="scrollToSection('methodology')" class="px-8 py-4 glass-morphism font-semibold rounded-lg hover-3d">
+                        Our Methodology
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Frame 2: Solution Configurator -->
+    <section id="solutions" class="frame min-h-screen py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-6 text-gradient">Discover Your AI Potential</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Every industry has unique challenges. Find the AI solutions that fit your business needs.
+                </p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-start">
+                    <!-- Industry Selector -->
+                    <div class="reveal">
+                        <h3 class="font-orbitron text-2xl font-bold mb-6">Select Your Industry</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="industry-card glass-morphism p-6 rounded-lg cursor-pointer hover-3d neon-border" data-industry="healthcare">
+                                <div class="text-4xl mb-3">🏥</div>
+                                <h4 class="font-semibold text-lg text-electric-cyan">Healthcare</h4>
+                                <p class="text-sm text-gray-400">Patient care, diagnostics, research</p>
+                            </div>
+                            <div class="industry-card glass-morphism p-6 rounded-lg cursor-pointer hover-3d neon-border" data-industry="finance">
+                                <div class="text-4xl mb-3">💰</div>
+                                <h4 class="font-semibold text-lg text-electric-cyan">Finance</h4>
+                                <p class="text-sm text-gray-400">Trading, risk, compliance</p>
+                            </div>
+                            <div class="industry-card glass-morphism p-6 rounded-lg cursor-pointer hover-3d neon-border" data-industry="retail">
+                                <div class="text-4xl mb-3">🛍️</div>
+                                <h4 class="font-semibold text-lg text-electric-cyan">Retail</h4>
+                                <p class="text-sm text-gray-400">Customer experience, inventory</p>
+                            </div>
+                            <div class="industry-card glass-morphism p-6 rounded-lg cursor-pointer hover-3d neon-border" data-industry="manufacturing">
+                                <div class="text-4xl mb-3">🏭</div>
+                                <h4 class="font-semibold text-lg text-electric-cyan">Manufacturing</h4>
+                                <p class="text-sm text-gray-400">Automation, quality, supply chain</p>
+                            </div>
+                            <div class="industry-card glass-morphism p-6 rounded-lg cursor-pointer hover-3d neon-border" data-industry="d2c">
+                                <div class="text-4xl mb-3">🚀</div>
+                                <h4 class="font-semibold text-lg text-electric-cyan">D2C</h4>
+                                <p class="text-sm text-gray-400">Direct sales, brand growth</p>
+                            </div>
+                            <div class="industry-card glass-morphism p-6 rounded-lg cursor-pointer hover-3d neon-border" data-industry="technology">
+                                <div class="text-4xl mb-3">💻</div>
+                                <h4 class="font-semibold text-lg text-electric-cyan">Technology</h4>
+                                <p class="text-sm text-gray-400">Software, platforms, innovation</p>
+                            </div>
+                        </div>
+                        
+                        <h3 class="font-orbitron text-2xl font-bold mb-6 mt-12">🎯 Your Challenges</h3>
+                        <div class="space-y-4">
+                            <label class="flex items-center space-x-4 cursor-pointer p-3 glass-morphism rounded-lg hover-3d challenge-option">
+                                <input type="checkbox" class="challenge-checkbox hidden" data-challenge="automation">
+                                <div class="w-6 h-6 border-2 border-electric-cyan rounded flex items-center justify-center checkbox-custom">
+                                    <svg class="w-4 h-4 text-electric-cyan hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">⚙️ Process Automation</div>
+                                    <div class="text-sm text-gray-400">Eliminate repetitive tasks and boost efficiency</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center space-x-4 cursor-pointer p-3 glass-morphism rounded-lg hover-3d challenge-option">
+                                <input type="checkbox" class="challenge-checkbox hidden" data-challenge="analytics">
+                                <div class="w-6 h-6 border-2 border-electric-cyan rounded flex items-center justify-center checkbox-custom">
+                                    <svg class="w-4 h-4 text-electric-cyan hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">📊 Data Analysis</div>
+                                    <div class="text-sm text-gray-400">Turn data into actionable insights</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center space-x-4 cursor-pointer p-3 glass-morphism rounded-lg hover-3d challenge-option">
+                                <input type="checkbox" class="challenge-checkbox hidden" data-challenge="customer">
+                                <div class="w-6 h-6 border-2 border-electric-cyan rounded flex items-center justify-center checkbox-custom">
+                                    <svg class="w-4 h-4 text-electric-cyan hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">🎭 Customer Experience</div>
+                                    <div class="text-sm text-gray-400">Create personalized interactions at scale</div>
+                                </div>
+                            </label>
+                            <label class="flex items-center space-x-4 cursor-pointer p-3 glass-morphism rounded-lg hover-3d challenge-option">
+                                <input type="checkbox" class="challenge-checkbox hidden" data-challenge="prediction">
+                                <div class="w-6 h-6 border-2 border-electric-cyan rounded flex items-center justify-center checkbox-custom">
+                                    <svg class="w-4 h-4 text-electric-cyan hidden" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold">🔮 Predictive Analytics</div>
+                                    <div class="text-sm text-gray-400">Anticipate trends and make smarter decisions</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Solution Display -->
+                    <div class="reveal">
+                        <div class="glass-morphism p-8 rounded-lg">
+                            <h3 class="font-orbitron text-2xl font-bold mb-6">Recommended Solutions</h3>
+                            <div id="solution-content">
+                                <div class="text-center py-12 text-gray-400">
+                                    <div class="text-6xl mb-4">🤖</div>
+                                    <p>Select your industry and challenges to see customized AI solutions</p>
+                                </div>
+                            </div>
+                            <div class="mt-8">
+                                <button id="get-strategy-btn" onclick="scrollToSection('contact')" class="w-full px-6 py-3 bg-gradient-to-r from-electric-cyan to-neural-gold text-space-blue font-semibold rounded-lg hover-3d glow-effect opacity-50 cursor-not-allowed" disabled>
+                                    Get Custom Strategy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Frame 3: Process Timeline -->
+    <section id="methodology" class="frame min-h-screen py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-6 text-gradient">Our 5-Step Framework</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    A simple yet powerful approach to transform your business with AI.
+                </p>
+            </div>
+            
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-5 gap-8">
+                    <!-- Step 1: Discover -->
+                    <div class="methodology-step reveal glass-morphism p-8 rounded-lg text-center hover-3d neon-border">
+                        <div class="text-6xl mb-4">🔍</div>
+                        <div class="w-16 h-16 bg-gradient-to-r from-electric-cyan to-neural-gold rounded-full flex items-center justify-center text-space-blue font-bold text-xl mx-auto mb-4">1</div>
+                        <h3 class="font-orbitron text-xl font-bold mb-3 text-gradient">Discover</h3>
+                        <p class="text-sm text-gray-300 mb-4">We analyze your current processes and identify AI opportunities</p>
+                        <div class="text-xs text-electric-cyan">Duration: 1-2 weeks</div>
+                    </div>
+                    
+                    <!-- Step 2: Design -->
+                    <div class="methodology-step reveal glass-morphism p-8 rounded-lg text-center hover-3d neon-border">
+                        <div class="text-6xl mb-4">🎨</div>
+                        <div class="w-16 h-16 bg-gradient-to-r from-electric-cyan to-neural-gold rounded-full flex items-center justify-center text-space-blue font-bold text-xl mx-auto mb-4">2</div>
+                        <h3 class="font-orbitron text-xl font-bold mb-3 text-gradient">Design</h3>
+                        <p class="text-sm text-gray-300 mb-4">Create a custom AI strategy tailored to your business goals</p>
+                        <div class="text-xs text-electric-cyan">Duration: 2-3 weeks</div>
+                    </div>
+                    
+                    <!-- Step 3: Develop -->
+                    <div class="methodology-step reveal glass-morphism p-8 rounded-lg text-center hover-3d neon-border">
+                        <div class="text-6xl mb-4">⚡</div>
+                        <div class="w-16 h-16 bg-gradient-to-r from-electric-cyan to-neural-gold rounded-full flex items-center justify-center text-space-blue font-bold text-xl mx-auto mb-4">3</div>
+                        <h3 class="font-orbitron text-xl font-bold mb-3 text-gradient">Develop</h3>
+                        <p class="text-sm text-gray-300 mb-4">Build and test your AI solutions with cutting-edge technology</p>
+                        <div class="text-xs text-electric-cyan">Duration: 4-12 weeks</div>
+                    </div>
+                    
+                    <!-- Step 4: Deploy -->
+                    <div class="methodology-step reveal glass-morphism p-8 rounded-lg text-center hover-3d neon-border">
+                        <div class="text-6xl mb-4">🚀</div>
+                        <div class="w-16 h-16 bg-gradient-to-r from-electric-cyan to-neural-gold rounded-full flex items-center justify-center text-space-blue font-bold text-xl mx-auto mb-4">4</div>
+                        <h3 class="font-orbitron text-xl font-bold mb-3 text-gradient">Deploy</h3>
+                        <p class="text-sm text-gray-300 mb-4">Launch your AI solutions with full support and training</p>
+                        <div class="text-xs text-electric-cyan">Duration: 2-4 weeks</div>
+                    </div>
+                    
+                    <!-- Step 5: Optimize -->
+                    <div class="methodology-step reveal glass-morphism p-8 rounded-lg text-center hover-3d neon-border">
+                        <div class="text-6xl mb-4">📈</div>
+                        <div class="w-16 h-16 bg-gradient-to-r from-electric-cyan to-neural-gold rounded-full flex items-center justify-center text-space-blue font-bold text-xl mx-auto mb-4">5</div>
+                        <h3 class="font-orbitron text-xl font-bold mb-3 text-gradient">Optimize</h3>
+                        <p class="text-sm text-gray-300 mb-4">Continuously improve and scale your AI solutions</p>
+                        <div class="text-xs text-electric-cyan">Duration: Ongoing</div>
+                    </div>
+                </div>
+                
+                <!-- Framework Summary -->
+                <div class="mt-16 reveal">
+                    <div class="glass-morphism p-8 rounded-lg text-center">
+                        <h3 class="font-orbitron text-2xl font-bold mb-6 text-gradient">Why Our Framework Works</h3>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            <div class="text-center">
+                                <div class="text-4xl mb-4">🎯</div>
+                                <h4 class="font-semibold text-lg mb-2">Focused Approach</h4>
+                                <p class="text-sm text-gray-400">We target high-impact areas first, delivering quick wins that build momentum</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-4xl mb-4">🔄</div>
+                                <h4 class="font-semibold text-lg mb-2">Iterative Process</h4>
+                                <p class="text-sm text-gray-400">Continuous feedback and improvement ensures your AI evolves with your business</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-4xl mb-4">🤝</div>
+                                <h4 class="font-semibold text-lg mb-2">Partnership Model</h4>
+                                <p class="text-sm text-gray-400">We work alongside your team, transferring knowledge and building internal capabilities</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Frame 4: ROI Calculator -->
+    <section id="roi" class="frame min-h-screen py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-6 text-gradient">Calculate Your AI ROI</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    See the potential impact of AI automation on your business operations.
+                </p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+                <!-- Calculator Inputs -->
+                <div class="reveal">
+                    <div class="glass-morphism p-8 rounded-lg">
+                        <h3 class="font-orbitron text-2xl font-bold mb-6">Business Parameters</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Company Size (Employees)</label>
+                                <input type="range" id="company-size" min="10" max="10000" value="250" class="w-full">
+                                <div class="flex justify-between text-sm text-gray-400 mt-1">
+                                    <span>10</span>
+                                    <span id="size-display" class="text-electric-cyan font-semibold">250</span>
+                                    <span>10,000+</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Current Process Efficiency</label>
+                                <input type="range" id="efficiency" min="30" max="90" value="60" class="w-full">
+                                <div class="flex justify-between text-sm text-gray-400 mt-1">
+                                    <span>30%</span>
+                                    <span id="efficiency-display" class="text-electric-cyan font-semibold">60%</span>
+                                    <span>90%</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-4">Automation Goals</label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center space-x-3">
+                                        <input type="checkbox" class="automation-goal" data-value="process">
+                                        <span>Process Automation (40% efficiency gain)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3">
+                                        <input type="checkbox" class="automation-goal" data-value="analytics">
+                                        <span>Data Analytics (35% decision speed)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3">
+                                        <input type="checkbox" class="automation-goal" data-value="customer">
+                                        <span>Customer Experience (50% satisfaction)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3">
+                                        <input type="checkbox" class="automation-goal" data-value="prediction">
+                                        <span>Predictive Analytics (60% accuracy)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Display -->
+                <div class="reveal">
+                    <div class="glass-morphism p-8 rounded-lg">
+                        <h3 class="font-orbitron text-2xl font-bold mb-6">Projected Results</h3>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gradient" id="cost-saving">$0</div>
+                                <div class="text-sm text-gray-400">Annual Cost Savings</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gradient" id="efficiency-gain">0%</div>
+                                <div class="text-sm text-gray-400">Efficiency Improvement</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gradient" id="roi-percentage">0%</div>
+                                <div class="text-sm text-gray-400">ROI</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gradient" id="payback-period">0</div>
+                                <div class="text-sm text-gray-400">Payback Period (Months)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="roi-chart" id="roi-chart"></div>
+                        
+                        <div class="mt-8">
+                            <button class="w-full px-6 py-3 bg-gradient-to-r from-electric-cyan to-neural-gold text-space-blue font-semibold rounded-lg hover-3d glow-effect">
+                                Download ROI Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Frame 5: Contact Section -->
+    <section id="contact" class="frame min-h-screen py-20">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-orbitron text-4xl md:text-5xl font-bold mb-6 text-gradient">Start Your Transformation</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Ready to unlock the power of AI for your business? Let's discuss your specific needs.
+                </p>
+            </div>
+            
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="reveal">
+                    <div class="glass-morphism p-8 rounded-lg">
+                        <h3 class="font-orbitron text-2xl font-bold mb-6">Get In Touch</h3>
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">First Name</label>
+                                    <input type="text" class="w-full px-4 py-3 glass-morphism rounded-lg focus:outline-none focus:ring-2 focus:ring-electric-cyan" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Last Name</label>
+                                    <input type="text" class="w-full px-4 py-3 glass-morphism rounded-lg focus:outline-none focus:ring-2 focus:ring-electric-cyan" required>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Email</label>
+                                <input type="email" class="w-full px-4 py-3 glass-morphism rounded-lg focus:outline-none focus:ring-2 focus:ring-electric-cyan" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Company</label>
+                                <input type="text" class="w-full px-4 py-3 glass-morphism rounded-lg focus:outline-none focus:ring-2 focus:ring-electric-cyan" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Message</label>
+                                <textarea rows="4" class="w-full px-4 py-3 glass-morphism rounded-lg focus:outline-none focus:ring-2 focus:ring-electric-cyan" placeholder="Tell us about your AI goals..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-electric-cyan to-neural-gold text-space-blue font-semibold rounded-lg hover-3d glow-effect">
+                                Schedule Consultation
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="reveal">
+                    <div class="space-y-8">
+                        <div class="glass-morphism p-6 rounded-lg">
+                            <h3 class="font-orbitron text-xl font-bold mb-4">Why Partner With Us</h3>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">✓</span>
+                                    <span>Proven AI implementation methodology</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">✓</span>
+                                    <span>50+ successful enterprise deployments</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">✓</span>
+                                    <span>End-to-end support and optimization</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">✓</span>
+                                    <span>Industry-specific expertise</span>
+                                </li>
+                                <li class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">✓</span>
+                                    <span>Knowledge transfer and training</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-morphism p-6 rounded-lg">
+                            <h3 class="font-orbitron text-xl font-bold mb-4">Get In Touch</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">📧</span>
+                                    <span>neural.labs1@gmail.com</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">📞</span>
+                                    <span>+91 82679 64496</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-electric-cyan">🌐</span>
+                                    <span>www.thinkingmind.ai</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <a href="https://wa.me/918267964496" target="_blank" class="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg hover-3d glow-effect">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                    </svg>
+                                    Chat on WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800">
+        <div class="container mx-auto px-6 text-center">
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <img src="resources/logo-thinking.png" alt="Thinking Mind" class="h-8 w-8">
+                <span class="font-orbitron text-lg font-bold text-gradient">Thinking Mind</span>
+            </div>
+            <p class="text-gray-400">© 2024 Thinking Mind AI Agency. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- Main JavaScript -->
+    <script src="main.js"></script>
+</body>
+</html>
